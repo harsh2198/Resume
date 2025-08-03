@@ -262,104 +262,105 @@ class ChartController {
         this.createHeroChart();
     }
 
-    createHeroChart() {
-        const ctx = document.getElementById('heroChart');
-        if (!ctx || typeof Chart === 'undefined') return;
+    // Update the chart colors in the ChartController class
+createHeroChart() {
+    const ctx = document.getElementById('heroChart');
+    if (!ctx || typeof Chart === 'undefined') return;
 
-        // Create gradient
-        const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(0, 212, 255, 0.8)');
-        gradient.addColorStop(1, 'rgba(78, 205, 196, 0.1)');
+    // Create gradient for light theme
+    const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)');
+    gradient.addColorStop(1, 'rgba(6, 182, 212, 0.1)');
 
-        const config = {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Data Processing (TB)',
-                    data: [2.1, 2.8, 3.2, 4.1, 4.8, 5.2, 6.1, 6.8, 7.2, 8.1, 8.8, 9.2],
-                    backgroundColor: gradient,
-                    borderColor: '#00d4ff',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#00d4ff',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(26, 26, 26, 0.9)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#b3b3b3',
-                        borderColor: '#00d4ff',
-                        borderWidth: 1,
-                        cornerRadius: 8,
-                        displayColors: false,
-                        callbacks: {
-                            title: function(context) {
-                                return `Month: ${context[0].label}`;
-                            },
-                            label: function(context) {
-                                return `${context.parsed.y} TB processed`;
-                            }
+    const config = {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Data Processing (TB)',
+                data: [2.1, 2.8, 3.2, 4.1, 4.8, 5.2, 6.1, 6.8, 7.2, 8.1, 8.8, 9.2],
+                backgroundColor: gradient,
+                borderColor: '#6366f1',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#6366f1',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(248, 250, 252, 0.95)',
+                    titleColor: '#1e293b',
+                    bodyColor: '#64748b',
+                    borderColor: '#6366f1',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: false,
+                    callbacks: {
+                        title: function(context) {
+                            return `Month: ${context[0].label}`;
+                        },
+                        label: function(context) {
+                            return `${context.parsed.y} TB processed`;
                         }
                     }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            color: 'rgba(51, 51, 51, 0.3)',
-                            borderColor: 'rgba(51, 51, 51, 0.5)'
-                        },
-                        ticks: {
-                            color: '#b3b3b3',
-                            font: {
-                                family: 'Inter',
-                                size: 11
-                            }
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: 'rgba(51, 51, 51, 0.3)',
-                            borderColor: 'rgba(51, 51, 51, 0.5)'
-                        },
-                        ticks: {
-                            color: '#b3b3b3',
-                            font: {
-                                family: 'Inter',
-                                size: 11
-                            },
-                            callback: function(value) {
-                                return value + ' TB';
-                            }
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                animation: {
-                    duration: 2000,
-                    easing: 'easeInOutQuart'
                 }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(226, 232, 240, 0.5)',
+                        borderColor: 'rgba(226, 232, 240, 0.7)'
+                    },
+                    ticks: {
+                        color: '#64748b',
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(226, 232, 240, 0.5)',
+                        borderColor: 'rgba(226, 232, 240, 0.7)'
+                    },
+                    ticks: {
+                        color: '#64748b',
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return value + ' TB';
+                        }
+                    }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutQuart'
             }
-        };
+        }
+    };
 
-        this.charts.heroChart = new Chart(ctx, config);
-    }
+    this.charts.heroChart = new Chart(ctx, config);
 }
+
 
 // Form Handling
 class FormController {
