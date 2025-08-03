@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .debug-panel { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .status { padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        #portfolio-frame { width: 100%; height: 600px; border: 2px solid #ddd; border-radius: 8px; }
+        .button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Portfolio Debug Console</h1>
+    
+    <div class="debug-panel">
+        <h3>System Checks</h3>
+        <div id="checks">
+            <div class="status info">Running diagnostics...</div>
+        </div>
+    </div>
+    
+    <div class="debug-panel">
+        <h3>Portfolio Preview</h3>
+        <button class="button" onclick="loadPortfolio()">Load Portfolio</button>
+        <button class="button" onclick="reloadPortfolio()">Reload</button>
+        <iframe id="portfolio-frame" src="about:blank"></iframe>
+    </div>
+    
+    <div class="debug-panel">
+        <h3>Console Logs</h3>
+        <div id="console-logs" style="background: #f8f9fa; padding: 15px; border-radius: 4px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script>
+        const checksDiv = document.getElementById('checks');
+        const consoleDiv = document.getElementById('console-logs');
+        
+        // Log function to display messages
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            consoleDiv.innerHTML += `<div style="color: ${type === 'error' ? 'red' : type === 'warning' ? 'orange' : 'black'}">[${timestamp}] ${message}</div>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        async function runChecks() {
+            checksDiv.innerHTML = '<div class="status info">Running diagnostics...</div>';
+            
+            try {
+                // Check if files exist
+                const files = ['index.html', 'styles.css', 'script.js'];
+                for (const file of files) {
+                    try {
+                        const response = await fetch(file);
+                        if (response.ok) {
+                            checksDiv.innerHTML += `<div class="status success">✓ ${file} loads successfully (${response.status})</div>`;
+                            log(`${file} loaded successfully`);
+                        } else {
+                            checksDiv.innerHTML += `<div class="status error">✗ ${file} failed to load (${response.status})</div>`;
+                            log(`${file} failed to load: ${response.status}`, 'error');
+                        }
+                    } catch (error) {
+                        checksDiv.innerHTML += `<div class="status error">✗ ${file} error: ${error.message}</div>`;
+                        log(`${file} error: ${error.message}`, 'error');
+                    }
+                }
+                
+                // Check external dependencies
+                const deps = [
+                    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap',
+                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                    'https://cdn.jsdelivr.net/npm/chart.js',
+                    'https://unpkg.com/aos@2.3.1/dist/aos.css',
+                    'https://unpkg.com/aos@2.3.1/dist/aos.js'
+                ];
+                
+                for (const dep of deps) {
+                    try {
+                        const response = await fetch(dep, { mode: 'no-cors' });
+                        checksDiv.innerHTML += `<div class="status success">✓ External dependency accessible: ${dep.split('/').pop()}</div>`;
+                        log(`External dependency OK: ${dep.split('/').pop()}`);
+                    } catch (error) {
+                        checksDiv.innerHTML += `<div class="status warning">⚠ External dependency may have issues: ${dep.split('/').pop()}</div>`;
+                        log(`External dependency warning: ${dep.split('/').pop()}`, 'warning');
+                    }
+                }
+                
+                checksDiv.innerHTML += '<div class="status success">✓ All checks completed</div>';
+                log('All diagnostics completed');
+                
+            } catch (error) {
+                checksDiv.innerHTML += `<div class="status error">✗ Diagnostic error: ${error.message}</div>`;
+                log(`Diagnostic error: ${error.message}`, 'error');
+            }
+        }
+        
+        function loadPortfolio() {
+            log('Loading portfolio...');
+            document.getElementById('portfolio-frame').src = 'index.html';
+        }
+        
+        function reloadPortfolio() {
+            log('Reloading portfolio...');
+            const frame = document.getElementById('portfolio-frame');
+            frame.src = frame.src;
+        }
+        
+        // Run checks on page load
+        runChecks();
+        
+        // Auto-load portfolio after checks
+        setTimeout(() => {
+            loadPortfolio();
+        }, 2000);
+    </script>
+</body>
+</html>

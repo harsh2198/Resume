@@ -362,8 +362,8 @@ createHeroChart() {
     };
 
     this.charts.heroChart = new Chart(ctx, config);
+    }
 }
-
 
 // Form Handling
 class FormController {
@@ -869,26 +869,36 @@ document.head.appendChild(notificationStyles);
 
 // Initialize Application
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize loading screen first
-    new LoadingScreen();
-    
-    // Initialize core components
-    new Navigation();
-    new AnimationController();
-    new ChartController();
-    new FormController();
-    new BackToTopButton();
-    new ProjectFilter();
-    new PerformanceMonitor();
-    
-    // Initialize particle system if not on mobile
-    if (window.innerWidth > 768) {
-        new ParticleSystem();
+    try {
+        // Initialize loading screen first
+        new LoadingScreen();
+        
+        // Initialize core components with error handling
+        new Navigation();
+        new AnimationController();
+        new ChartController();
+        new FormController();
+        new BackToTopButton();
+        new ProjectFilter();
+        new PerformanceMonitor();
+        
+        // Initialize particle system if not on mobile
+        if (window.innerWidth > 768) {
+            new ParticleSystem();
+        }
+        
+        // Ensure body is visible
+        document.body.style.opacity = '1';
+        document.body.style.visibility = 'visible';
+        
+        console.log('Portfolio initialized successfully');
+        
+    } catch (error) {
+        console.error('Error initializing portfolio:', error);
+        // Ensure body is still visible even if there are errors
+        document.body.style.opacity = '1';
+        document.body.style.visibility = 'visible';
     }
-    
-    // Ensure body is visible
-    document.body.style.opacity = '1';
-    document.body.style.visibility = 'visible';
 });
 
 // Service Worker Registration removed to prevent errors
