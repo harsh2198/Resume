@@ -265,7 +265,10 @@ class ChartController {
     // Update the chart colors in the ChartController class
 createHeroChart() {
     const ctx = document.getElementById('heroChart');
-    if (!ctx || typeof Chart === 'undefined') return;
+    if (!ctx || typeof Chart === 'undefined') {
+        console.warn('Chart.js not loaded or heroChart element not found');
+        return;
+    }
 
     // Create gradient for light theme
     const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
@@ -553,12 +556,23 @@ class LoadingScreen {
         window.addEventListener('load', () => {
             setTimeout(() => this.hideLoading(), 1000);
         });
+        
+        // Fallback: Hide loading screen after 3 seconds regardless
+        setTimeout(() => {
+            if (this.loadingElement && !this.loadingElement.classList.contains('hide')) {
+                this.hideLoading();
+            }
+        }, 3000);
     }
 
     hideLoading() {
         if (this.loadingElement) {
             this.loadingElement.classList.add('hide');
-            setTimeout(() => this.loadingElement.remove(), 500);
+            setTimeout(() => {
+                if (this.loadingElement && this.loadingElement.parentNode) {
+                    this.loadingElement.remove();
+                }
+            }, 500);
         }
     }
 }
@@ -872,25 +886,13 @@ document.addEventListener('DOMContentLoaded', () => {
         new ParticleSystem();
     }
     
-    // Add smooth reveal animation for page load
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-        document.body.style.transition = 'opacity 0.5s ease-in-out';
-    }, 100);
+    // Ensure body is visible
+    document.body.style.opacity = '1';
+    document.body.style.visibility = 'visible';
 });
 
-// Service Worker Registration (Progressive Web App)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
-}
+// Service Worker Registration removed to prevent errors
+// The portfolio doesn't need a service worker for basic functionality
 
 // Dark/Light Mode Toggle (Future Enhancement)
 class ThemeController {
